@@ -16,7 +16,7 @@
 
 /**
  * @class Task
- * Diese Klasse dient als Datencontainer fuer Task Objekte. Neben den reinen
+ * Diese Klasse dient als Datencontainer für Task Objekte. Neben den reinen
  * Attributen enthält sie auch Logik zur Darstellung der Tasks innerhalb des
  * Gantt Diagramms. So wird die Gesamte grafische Repräsentation eines Tasks
  * mit Hilfe von Raphael Objekten verwaltet.

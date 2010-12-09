@@ -1,5 +1,21 @@
 <?php
 /**
+ * Copyright 2010 MEHRKANAL GmbH <www.mehrkanal.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * Diese Klasse dient als Datencontainer fuer Resource Objekte.
  * Konstruktor der Klasse, erzeugt eine neue Instanz.
  *
@@ -7,10 +23,10 @@
  */
 class ResourceDto {
 
-	private $_id;
-	private $_name;
-	private $_tasks = array(); 		// Array mit Untertasks
-	private $_absence = array(); 	// Array mit Tasks die Urlaub oder Abwesenheit repraesentieren
+	public $id;
+	public $name;
+	public $tasks	= array(); 		// Array mit Untertasks
+	public $absence = array(); 		// Array mit Tasks die Urlaub oder Abwesenheit repraesentieren
 
 	/**
 	 * Erzeugt eine neue Task Instanz.
@@ -20,8 +36,8 @@ class ResourceDto {
 	 */
 	function __construct($id, $name)
 	{
-		$this->_id = $id;
-		$this->_name = $name;
+		$this->id 	= (int) $id;
+		$this->name = utf8_encode($name);
 	}
 
 	/**
@@ -29,8 +45,8 @@ class ResourceDto {
 	 */
 	public function addTask($task)
 	{
-		if (getType($task) == "object"  && !in_array($task, $this->_tasks)) {
-			array_push($this->_tasks, $task);
+		if (getType($task) == "object"  && !in_array($task, $this->tasks)) {
+			array_push($this->tasks, $task);
 		}
 	}
 	
@@ -39,80 +55,9 @@ class ResourceDto {
 	 */
 	public function addAbsence($task)
 	{
-		if (!in_array($task, $this->_absence)) {
-			array_push($this->_absence, $task);
+		if (!in_array($task, $this->absence)) {
+			array_push($this->absence, $task);
 		}
-	}	
-
-	/**
-	 * Gibt die JSON Repraesentation dieses Objektes zurueck.
-	 */
-	public function toJSON()
-	{
-		$jsonString = '';
-		
-		$jsonString .= '{';
-		$jsonString .= '"id" : ' . $this->_id . ', ';
-		$jsonString .= '"name" : "' . $this->_name . '", ';
-		if ($this->hasTasks()) {
-			$jsonString .= '"tasks" : [';
-			foreach ($this->_tasks as $task) {
-
-				$jsonString .= $task->toJSON();
-				$jsonString .= ", ";
-			}
-			// Letztes Komma ist zuviel --> entfernen
-			$jsonString = substr($jsonString, 0, strlen($jsonString) - 2); 
-			$jsonString .= '] ,';			
-		} else {
-			$jsonString .= '"tasks" : null, ';
-		}
-		
-		if ($this->hasAbsence()) {
-			$jsonString .= '"absence" : [';
-			foreach ($this->_absence as $task) {
-				$jsonString .= $task->toJSON();
-				$jsonString .= ", ";
-			}
-			// Letztes Komma ist zuviel --> entfernen
-			$jsonString = substr($jsonString, 0, strlen($jsonString) - 2); 
-			$jsonString .= '] ';
-		} else {
-			$jsonString .= '"absence" : null';
-		}
-		$jsonString .= '}';
-		
-		return $jsonString;
-	}
-	
-	public function hasTasks()
-	{
-		return count($this->_tasks) > 0;
-	}
-
-	public function hasAbsence()
-	{
-		return count($this->_absence) > 0;
-	}
-
-	public function getId()
-	{
-		return $this->_id;
-	}
-
-	public function getName()
-	{
-		return $this->_name;
-	}
-	
-	public function setTasks($tasks)
-	{
-		$this->_tasks = $tasks;
-	}
-
-	public function setAbsence($absence)
-	{
-		$this->_absence = $absence;
 	}
 }
 ?>

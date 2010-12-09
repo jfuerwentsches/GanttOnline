@@ -1,5 +1,21 @@
 <?php
 /**
+ * Copyright 2010 MEHRKANAL GmbH <www.mehrkanal.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * Importiert eine GanttProject XML-Datei.
  *
  * Dabei wird zwischen Projekt- und Resourcenansicht unterschieden. Um
@@ -81,16 +97,7 @@ class DataAccessObject_XML {
 		if ($resources != false) {
 
 			$type = DISPLAY_RESOURCES;
-			
-			$dataString = "";
-		    $dataString .= "[";
-		    foreach ($resources as $resource) {
-		        if ($resource->hasTasks()) {
-		            $dataString .= $resource->toJSON() . ", ";
-		        }
-		    }
-		    $dataString = substr($dataString, 0, strlen($dataString) - 2);
-		    $dataString .= "]";
+			$dataString = json_encode($resources);
 		    
 		} else {
 		
@@ -98,17 +105,11 @@ class DataAccessObject_XML {
 
 			if ($tasks != false) {
 
-				$type = DISPLAY_PROJECTS;			
+				$type = DISPLAY_PROJECTS;
+				$dataString = json_encode($tasks);
 
-				$dataString = "";
-			    $dataString .= "[";
-			    foreach ($tasks as $task) {
-		            $dataString .= $task->toJSON() . ", ";
-			    }
-			    $dataString = substr($dataString, 0, strlen($dataString) - 2);
-			    $dataString .= "]";
 			} else {
-				return false;
+				$dataString = false;
 			}		
 		}
 		
@@ -247,15 +248,4 @@ class DataAccessObject_XML {
 		$this->xml_object->asXML($this->xml_file);    	
     }
 }
-
-
-//$displayMode = DISPLAY_PROJECTS;
-//
-//$dataString .= "[";
-//foreach ($tasks as $task) {
-//    $dataString .= taskNodeToObject($task)->toJSON() . ", ";
-//}
-//// Letztes Komma ist zuviel --> entfernen
-//$dataString = substr($dataString, 0, strlen($dataString) - 2);
-//$dataString .= "]";
 ?>

@@ -74,7 +74,7 @@ const DISPLAY_PROJECTS = 2;
  * repräsentiert ein Gantt-Diagramm inkl. der Tabelle mit den Diagrammdaten.
  * Die gesamte Programmlogik (samt Interaktion) ist hier gekapselt.
  * Dazu werden dem GanttChart beim Aufruf eine Liste von Task Objekten (in
- * JSON Repräsentation) übergeben. Anhand dieser Liste berechnet das die Klasse
+ * JSON Repräsentation) übergeben. Anhand dieser Liste berechnet die Klasse
  * die Koordinaten der einzelnen Balken im Diagramm. Somit bestimmen die Daten
  * den Aufbau des Diagramms, alle übergebenen Daten werden auch angezeigt.
  * Lediglich der Zeitraum der angezeigt werden soll kann über den Parameter
@@ -85,8 +85,8 @@ const DISPLAY_PROJECTS = 2;
  *
  * @tparam	int		id			ID des DOM Elements an das das Gantt-Diagramm
  *                              gehangen wird
- * @tparam	Date	start		Startdatum
- * @tparam	int		showWeeks	Anzahl Wochen
+ * @tparam	Date	start		Datum an dem die Anzeige beginnt
+ * @tparam	int		showWeeks	Anzahl Wochen die im Diagramm zu sehen sind
  * @tparam	int		width		Breite des gesamten Diagramms
  * @tparam	int		height		Hoehe des gesamten Diagramms
  * @tparam	string	jsonString	Daten für das Diagramm als JSON String
@@ -131,8 +131,9 @@ function GanttChart(id, start, showWeeks, width, height, jsonString, filename) {
 	if (jsonObject.data == null) {		
 		this.init(false);		
 	} else {
-		/* Element mit der Klasse .mkg_tableCell wird benötigt um die Höhe zu 
-		 * ermitteln, wird in init() automatisch wieder entfernt.
+		/* Element mit der CSS-Klasse .mkg_tableCell wird benötigt um die Höhe
+		 * zu ermitteln, wird in init() automatisch wieder entfernt. Die Höhe
+		 * dieses Elements dient auch als Höhe für einzelne Zeilen im Diagramm.
 		 */
 		$('#' + id).append('<div class="mkg_tableCell"></div>');
 
@@ -836,7 +837,7 @@ GanttChart.prototype.refreshTableRow = function(currentTask) {
 GanttChart.prototype.drawGanttChart = function() {
 
 	// Zeichenflaeche saeubern
-	this._paper.clear();	
+	this._paper.clear();
 	this.calculateAllTaskCoordinates();
 	if (this._displayMode == DISPLAY_RESOURCES) {
 		this.drawAbsence();

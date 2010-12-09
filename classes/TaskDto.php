@@ -1,5 +1,21 @@
 <?php
 /**
+ * Copyright 2010 MEHRKANAL GmbH <www.mehrkanal.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * Diese Klasse dient als Datencontainer fuer Task Objekte.
  * Konstruktor der Klasse, erzeugt eine neue Instanz.
  *
@@ -7,23 +23,23 @@
  */
 class TaskDto {
 
-	private $_id 					= null;
-	private $_name					= null;
-	private $_color 				= null;
-	private $_startDate 			= null;
-	private $_duration 				= null;
-	private $_complete 				= null;
-	private $_priority 				= null;
+	public $id 					= null;
+	public $name				= null;
+	public $color 				= null;
+	public $startDate 			= null;
+	public $duration 			= null;
+	public $complete 			= null;
+	public $priority 			= null;
 	
-	private $_jobNumber 			= null;
-	private $_jobDescription 		= null;
-	private $_owner 				= null;
-	private $_ownerShortname 		= null;
-	private $_deadline		 		= null;
-	private $_deadlineDescription	= null;	
-	private $_active				= null;	
+	public $jobNumber 			= null;
+	public $jobDescription 		= null;
+	public $owner 				= null;
+	public $ownerShortname 		= null;
+	public $deadline		 	= null;
+	public $deadlineDescription	= null;	
+	public $active				= null;	
 		
-	private $_children = array(); 	// Array mit Kindern
+	public $children = array(); 	// Array mit Kindern
 
 	/**
 	 * Erzeugt eine neue Task Instanz
@@ -37,27 +53,27 @@ class TaskDto {
 	 */
 	function __construct($id, $name, $color, $start, $duration, $complete, $priority, $jobNumber, $jobDescription, $owner, $ownerShortname, $deadline, $deadlineDescription, $active)
 	{
-		$this->_id 					= $id;
-		$this->_name 				= $name;
-		$this->_color 				= $color;
-		$this->_startDate			= $start;
-		$this->_duration 			= $duration;
-		$this->_complete 			= $complete;
-		$this->_priority 			= $priority;
+		$this->id 					= $id;
+		$this->name 				= $name;
+		$this->color 				= $color;
+		$this->startDate			= $start;
+		$this->duration 			= $duration;
+		$this->complete 			= $complete;
+		$this->priority 			= $priority;
 		
-		$this->_jobNumber 			= $jobNumber;
-		$this->_jobDescription 		= $jobDescription;
-		$this->_owner 				= $owner;
-		$this->_ownerShortname 		= $ownerShortname;
-		$this->_deadline	 		= $deadline;
-		$this->_deadlineDescription	= $deadlineDescription;
-		$this->_active				= $active;
+		$this->jobNumber 			= $jobNumber;
+		$this->jobDescription 		= $jobDescription;
+		$this->owner 				= $owner;
+		$this->ownerShortname 		= $ownerShortname;
+		$this->deadline	 			= $deadline;
+		$this->deadlineDescription	= $deadlineDescription;
+		$this->active				= $active;
 	}
 	
 	/**
 	 * Gibt das Enddatum dieses Tasks zurueck (Start + Dauer)
 	 */
-	private function _getEndDate($start, $duration)
+	private function getEndDate($start, $duration)
 	{
 		return strtotime(date("Y-m-d", strtotime("$start")) . " + $duration days");
 	}
@@ -67,123 +83,9 @@ class TaskDto {
 	 */
 	public function addChild($task)
 	{
-		if (!in_array($task, $this->_children)) {
-			array_push($this->_children, $task);
+		if (!in_array($task, $this->children)) {
+			array_push($this->children, $task);
 		}
-	}
-
-	/**
-	 * Gibt die JSON Repraesentation dieses Objektes zurueck.
-	 */
-	public function toJSON()
-	{
-		$jsonString = '';
-		
-		$jsonString .= '{';
-		$jsonString .= '"id" : ' . json_encode($this->_id) . ', ';
-		$jsonString .= '"name" : ' . json_encode($this->_name) . ', ';
-		$jsonString .= '"color" : ' . json_encode($this->_color) . ', ';
-		$jsonString .= '"startDate" : ' . json_encode($this->_startDate * 1000) . ', ';
-		$jsonString .= '"duration" : ' . $this->_duration . ', ';
-		$jsonString .= '"complete" : ' . json_encode($this->_complete) . ', ';
-		$jsonString .= '"priority" : ' . json_encode($this->_priority) . ', ';
-		$jsonString .= '"jobNumber" : ' . json_encode($this->_jobNumber) . ', ';
-		$jsonString .= '"jobDescription" : ' . json_encode($this->_jobDescription) . ', ';
-		$jsonString .= '"owner" : ' . json_encode($this->_owner) . ', ';
-		$jsonString .= '"ownerShortname" : ' . json_encode($this->_ownerShortname) . ', ';
-		$jsonString .= '"deadline" : ' . json_encode($this->_deadline * 1000) . ', ';
-		$jsonString .= '"deadlineDescription" : ' . json_encode($this->_deadlineDescription) . ', ';
-		$jsonString .= '"active" : ' . json_encode($this->_active) . ', ';		
-		if ($this->hasChildren()) {
-			$jsonString .= '"children" : [';
-			foreach ($this->_children as $child) {
-				$jsonString .= $child->toJSON();
-				$jsonString .= ", ";
-			}
-			// Letztes Komma ist zuviel --> entfernen
-			$jsonString = substr($jsonString, 0, strlen($jsonString) - 2); 
-			$jsonString .= ']';			
-		} else {
-			$jsonString .= '"children" : null';
-		}		
-		$jsonString .= '}';
-		
-		return $jsonString;
-	}
-	
-	public function hasChildren()
-	{
-		return count($this->_children) > 0;
-	}
-	
-	public function getChecksum()
-	{
-		return md5($this->_id . $this->_name .	$this->_color . date("Y-m-d", $this->_startDate) .	$this->_duration . $this->_complete . $this->_priority . $this->_jobNumber .	$this->_jobDescription . $this->_owner . $this->_ownerShortname);
-	}
-
-	public function getId()
-	{
-		return $this->_id;
-	}
-
-	public function getName()
-	{
-		return $this->_name;
-	}
-	
-	public function getColor()
-	{
-		return $this->_color;
-	}
-
-	public function getStartDate()
-	{
-		return $this->_startDate;
-	}
-	
-	public function getDuration()
-	{
-		return $this->_duration;
-	}
-
-	public function getComplete()
-	{
-		return $this->_complete;
-	}
-
-	public function getPriority()
-	{
-		return $this->_priority;
-	}
-
-	public function getJobNumber()
-	{
-		return $this->_jobNumber;
-	}
-
-	public function getJobDescription()
-	{
-		return $this->_jobDescription;
-	}
-	public function getOwner()
-	{
-		return $this->_owner;
-	}	
-	public function getOwnerShortname()
-	{
-		return $this->_ownerShortname;
-	}	
-	public function getDeadline()
-	{
-		return $this->_deadline;
-	}	
-	public function getDeadlineDescription()
-	{
-		return $this->_deadlineDescription;
-	}
-	public function isActive()
-	{
-		return $this->_active == 1;
 	}
 }
 ?>
