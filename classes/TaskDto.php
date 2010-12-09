@@ -16,8 +16,9 @@
  */
 
 /**
- * Diese Klasse dient als Datencontainer fuer Task Objekte.
- * Konstruktor der Klasse, erzeugt eine neue Instanz.
+ * Diese Klasse dient als Datencontainer fuer Task Objekte. Sie wird nur
+ * verwendet um die Datensätze komfortabel mittels json_encode in JSON Notation
+ * überführen zu können und besitzt keine weitere Programmlogik.
  *
  * @author Johannes Fuerwentsches <fuerwentsches@mehrkanal.com>
  */
@@ -43,13 +44,14 @@ class TaskDto {
 
 	/**
 	 * Erzeugt eine neue Task Instanz
-	 * @param	id			(int)			Eindeutige ID dieses Tasks
-	 * @param	name		(string)		Name des Tasks
-	 * @param	color		(string)		Farbe im Gantt-Diagramm in RGB Hex (6-stellig)
-	 * @param	start		(string)		Startdatum YYYY-MM-DD
-	 * @param	duration	(int)			Dauer in Tagen - GanttProject unterstuetzt nur ganze Tage, es sollen jedoch auch kleinere Einheiten moeglich sein
-	 * @param	complete	(int)			Fertigstellung des Tasks in Prozent
-	 * @param	priority	(int)			Prioritat (0 -> niedrig | 1 -> Normal | 2 -> Hoch)
+	 *
+	 * @param	int		$id			Eindeutige ID dieses Tasks
+	 * @param	string	$name		Name des Tasks
+	 * @param	string	$color		Farbe im Gantt-Diagramm in RGB Hex (6-stellig)
+	 * @param	string	$start		Startdatum YYYY-MM-DD
+	 * @param	int		$duration	Dauer in Tagen - GanttProject unterstuetzt nur ganze Tage, es sollen jedoch auch kleinere Einheiten moeglich sein
+	 * @param	int		$complete	Fertigstellung des Tasks in Prozent
+	 * @param	int		$priority	Prioritat (0 -> niedrig | 1 -> Normal | 2 -> Hoch)
 	 */
 	function __construct($id, $name, $color, $start, $duration, $complete, $priority, $jobNumber, $jobDescription, $owner, $ownerShortname, $deadline, $deadlineDescription, $active)
 	{
@@ -71,7 +73,7 @@ class TaskDto {
 	}
 	
 	/**
-	 * Gibt das Enddatum dieses Tasks zurueck (Start + Dauer)
+	 * Gibt das Enddatum dieses Tasks zurück (Start + Dauer)
 	 */
 	private function getEndDate($start, $duration)
 	{
@@ -79,13 +81,31 @@ class TaskDto {
 	}
 	
 	/**
-	 * Fuegt diesem Task ein Kind hinzu.
+	 * Fügt diesem Task ein Kind hinzu.
 	 */
 	public function addChild($task)
 	{
 		if (!in_array($task, $this->children)) {
 			array_push($this->children, $task);
 		}
+	}
+
+	/**
+	 * Gibt einen MD5 Hash zurück, der diesen Task eindeutig identifiziert.
+	 *
+	 * @return string Checksumme für diesen Task.
+	 */
+	public function getChecksum()
+	{
+		return md5($this->id . 
+					$this->name .
+					$this->color .
+					date("Y-m-d", $this->startDate) .
+					$this->duration . $this->complete .
+					$this->priority . $this->jobNumber .
+					$this->jobDescription .
+					$this->owner .
+					$this->ownerShortname);
 	}
 }
 ?>
