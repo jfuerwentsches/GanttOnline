@@ -220,6 +220,7 @@ Task.prototype.createFromJSON = function(taskJson) {
 	this._active				= taskJson.active;
 }
 
+
 /**
  * Fügt diesem Task einen neuen Untertask hinzu.
  *
@@ -542,7 +543,7 @@ Task.prototype.getDuration = function() {
 
 /**
  * Gibt den Fortschritt der Bearbeitung dieses Tasks zurück.
- *
+ * 
  * @treturn int         Fortschritt der Bearbeitung dieses Tasks.
  */
 Task.prototype.getComplete = function() { 
@@ -720,6 +721,7 @@ Task.prototype.getEndDate = function() {
 
 	var endDate;
 
+	/* Wenn dieser Task Kinder hat, muss rekursiv gearbeitet werden. */
 	if (this.hasChildren()) {
 		var currentEndDate = this._children[0].getEndDate();
 		endDate = currentEndDate;
@@ -730,47 +732,56 @@ Task.prototype.getEndDate = function() {
 			}
 		}
 	} else {
-	
+		/* Nachkomma Anteil der Dauer abspalten. */
 		var decimal = this._duration * 100 % 100 / 100;
-	
+
+		/* Wenn die Dauer eine Dezimalzahl ist muessen die Stunden des Enddatums
+		 * ebenfalls entsprechend gesetzt werden.
+		 */
 		if (decimal == 0) {
-			endDate = Util.addDays(this.getStartDate(), this._duration - 1);	
+			endDate = Util.addDays(this.getStartDate(), this._duration - 1);
 			endDate.setHours(23);
 		} else {
-			endDate = Util.addDays(this.getStartDate(), this._duration);	
+			endDate = Util.addDays(this.getStartDate(), this._duration);
 			endDate.setHours(24 * decimal - 1);
-	
-		}	
+
+		}
 		endDate.setMinutes(59);
-	
-		var startDay	= this.getStartDate().getDay();
-	
+
+		var startDay = this.getStartDate().getDay();
+
 		if (this._duration <= 5) {
-			// Task geht über ein Wochenende
+			/* Task geht ueber ein Wochenende */
 			if (this._duration + startDay - 1 > 5) {
 				endDate = Util.addDays(endDate, 2);
 			}
 		} else {
-		
-			/* Minimale Anzahl an Wochenenden entspricht der Anzahl an
-             * Arbeitswochen die vollständig in den Zeitraum passen abzgl.
-             * einer Woche
+			/* Die Minimale Anzahl an Wochenenden entspricht der Anzahl an
+			 * Arbeitswochen die vollstaendig in den Zeitraum passen. Falls die
+			 * Dauer restlos in Arbeitswochen ausgedrueckt werden kann (Rest 0),
+			 * ist die Mindestanzahl der Wochenenden um eine Woche geringer.
 			 */
-			var numberOfWeekends = ((this._duration - (this._duration % 5)) / 5) - 1;
+			var numberOfWeekends;
+			if (this._duration % 5 == 0) {
+				numberOfWeekends = Math.floor(this._duration / 5) - 1;
+			} else {
+				numberOfWeekends = Math.floor(this._duration / 5);
+			}
 
-            numberOfWeekends++;
-            
+			/* Enddatum um Mindestwochenendanzahl * 2 (zwei Tage pro WE) nach
+			 * hinten verschieben.
+			 */
 			endDate = Util.addDays(endDate, 2 * numberOfWeekends);
-			
-			/* Wenn nach dem Verschieben ein Samstag oder Sonntag erreicht wurde müssen
-			 * weitere zwei Tage hinzugefügt werden.
+
+			/* Wenn nach dem Verschieben ein Samstag oder Sonntag erreicht wurde
+			 * muessen weitere zwei Tage hinzugefuegt werden.
 			 */
 			if (endDate.getDay() == 6 || endDate.getDay() == 0) {
-				endDate = Util.addDays(endDate, 2);	
+				endDate = Util.addDays(endDate, 2);
 			}
 		}
 	}
-		
+
 	return endDate;
 }
 
