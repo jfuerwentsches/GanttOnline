@@ -205,17 +205,17 @@ Task.prototype.createFromJSON = function(taskJson) {
 	this._id 					= taskJson.id;
 	this._name 					= taskJson.name;
 	this._color 				= taskJson.color;
-	this._startDate 			= new Date(taskJson.startDate);
+	this._startDate 			= new Date(taskJson.startDate * 1000);
 	this._duration 				= taskJson.duration;
-	this._complete 				= taskJson.complete;	
+	this._complete 				= taskJson.complete;
 	this._priority 				= taskJson.priority;
 	this._jobNumber				= taskJson.jobNumber;
 	this._jobDescription		= taskJson.jobDescription;
 	this._owner					= taskJson.owner;
 	this._ownerShortname		= taskJson.ownerShortname;
 	if (taskJson.deadline != 0) {
-		this._deadline				= new Date(taskJson.deadline);
-		this._deadlineDescription 	= taskJson.deadlineDescription;				
+		this._deadline				= new Date(taskJson.deadline * 1000);
+		this._deadlineDescription 	= taskJson.deadlineDescription;
 	}
 	this._active				= taskJson.active;
 }

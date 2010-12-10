@@ -408,12 +408,6 @@ GanttChart.prototype.init = function(hasData) {
 		this._containerElement.append('<div id="dialogConfirmDelete" style="display: none" title="Buchung l&ouml;schen">' +
 									  'M&ouml;chten Sie die ausgew&auml;hlte Buchung unwiderruflich l&ouml;schen?' + 
 									  '</div>');
-
-		// Dialog für Sicherheitsabfrage, ob eine Buchung als aktiv markiert werden soll
-		this._containerElement.append('<div id="dialogConfirmProgress" style="display: none" title="Aufgabe als in Arbeit markieren">' +
-									  'M&ouml;chten Sie die ausgew&auml;hlte Aufgabe als die aktuell bearbeitete markieren? Es kann immer nur eine Aufgabe markiert sein!' + 
-									  '</div>');
-
 	
 		this._dataElement = $('#mkg_data_' + this._id);
 		this._dataElement.append('<div id="mkg_headline_' + this._id + '></div>');
@@ -437,7 +431,8 @@ GanttChart.prototype.init = function(hasData) {
 			// größerem Speicherbedarf kommen kann, wenn die IDs höher werden
 			// --> liegt an der Methode mit der Arrays in JS gespeichert werden
 			this._tasksById[currentTask.getId()] = currentTask;
-			
+
+			// Speichert die ID des aktiven Tasks für diese Ressource in ein "Hilfsarray".
 			if (currentTask.isActive()) {
 				this._resourceActiveTask[currentTask.getParent().getId()] = currentTask.getId();
 			}
@@ -751,7 +746,7 @@ GanttChart.prototype.renderTableRow = function(currentTask) {
 	// Spalte: Titel
 	newRow.append('<div style="width: ' + (this._columsWidth[0] - indention) + 'px; padding-left: ' + indention + 'px;"' + 'class="mkg_tableCell">' + 
 				  '<img id="activate_' + currentTask.getId() + '" src="' + IMAGE_FOLDER_PATH + imgName + '" style="float: left;" class="leaf" />' + 
-				  '<input type="text" id="taskDescription_' + currentTask.getId() + '" class="' + descriptionClass + '" value="' + description + '" readonly/>' + 
+				  '<input id="taskDescription_' + currentTask.getId() + '" class="' + descriptionClass + '" type="text" value="' + description + '" readonly/>' +
 				  '</div>');
 
 	// Spalte: Startdatum
@@ -772,9 +767,8 @@ GanttChart.prototype.renderTableRow = function(currentTask) {
 	if (currentTask.isActive()) {
 		newRow.children().addClass('progress');
 	}
-
 	
-	// Task auf oberster Ebene der weitere Kinder hat
+	// Task auf oberster Ebene soll fett dargestellt werden
 	if (currentTask.getGeneration() == 1) {
 		newRow.css('font-weight','bold');
 	}

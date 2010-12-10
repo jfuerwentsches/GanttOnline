@@ -55,21 +55,21 @@ class TaskDto {
 	 */
 	function __construct($id, $name, $color, $start, $duration, $complete, $priority, $jobNumber, $jobDescription, $owner, $ownerShortname, $deadline, $deadlineDescription, $active)
 	{
-		$this->id 					= $id;
-		$this->name 				= $name;
-		$this->color 				= $color;
-		$this->startDate			= $start;
-		$this->duration 			= $duration;
-		$this->complete 			= $complete;
-		$this->priority 			= $priority;
+		$this->id 					= (int) $id;
+		$this->name 				= (string) $name;
+		$this->color 				= (string) $color;
+		$this->startDate			= (int) $start;
+		$this->duration 			= (float) $duration;
+		$this->complete 			= (int) $complete;
+		$this->priority 			= (int) $priority;
 		
-		$this->jobNumber 			= $jobNumber;
-		$this->jobDescription 		= $jobDescription;
-		$this->owner 				= $owner;
-		$this->ownerShortname 		= $ownerShortname;
-		$this->deadline	 			= $deadline;
-		$this->deadlineDescription	= $deadlineDescription;
-		$this->active				= $active;
+		$this->jobNumber 			= (int) $jobNumber;
+		$this->jobDescription 		= (string) $jobDescription;
+		$this->owner 				= (int) $owner;
+		$this->ownerShortname 		= (string) $ownerShortname;
+		$this->deadline	 			= (int) $deadline;
+		$this->deadlineDescription	= (string) $deadlineDescription;
+		$this->active				= (int) $active;
 	}
 	
 	/**
